@@ -11,6 +11,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class ProductFixtures extends Fixture implements DependentFixtureInterface
 {
+    /**
+     * load
+     *
+     * @param  ObjectManager $manager Manager
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
         // Faker
@@ -30,9 +36,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
                 ->setPrice($faker->randomFloat(2, 8, 5000))
                 ->setSku($faker->ean13())
                 ->setCategory($category)
-                ->setAvailable($faker->boolean(50))
-                ->setCreatedAt(new DateTime('-1 day'))
-                ->setUpdatedAt(new DateTime('-1 day'));
+                ->setAvailable($faker->boolean(50));
 
                 $manager->persist($product);
         }

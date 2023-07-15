@@ -24,6 +24,12 @@ class BrandFixtures extends Fixture
         return sprintf('brand_%s', $key);
     }
 
+    /**
+     * load
+     *
+     * @param  ObjectManager $manager Manager
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
         foreach ($this->brands as $key => $brandName) {

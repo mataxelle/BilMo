@@ -3,10 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Gedmo\Blameable\Traits\BlameableEntity;
+use App\Entity\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
 {
@@ -19,17 +22,20 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(min: 2, max: 100)]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\Length(min: 2, max: 100)]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     private ?string $lastname = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Assert\Length(min: 2, max: 180)]
+    #[Assert\Email(message: 'Cet email est invalide')]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     private ?string $email = null;
-
-    #[ORM\ManyToOne(inversedBy: 'users')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
 
     public function getId(): ?int
     {
@@ -68,18 +74,6 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function setClient(?Client $client): static
-    {
-        $this->client = $client;
 
         return $this;
     }

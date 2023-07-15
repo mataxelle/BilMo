@@ -25,6 +25,12 @@ class CategoryFixtures extends Fixture
         return sprintf('category_%s', $key);
     }
 
+    /**
+     * load
+     *
+     * @param  ObjectManager $manager Manager
+     * @return void
+     */
     public function load(ObjectManager $manager): void
     {
         foreach ($this->categories as $key => $categoryName) {
