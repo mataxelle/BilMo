@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ProductRepository;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -15,22 +16,28 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['brand:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['brand:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['brand:read'])]
     private ?Brand $brand = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['brand:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['brand:read'])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['brand:read'])]
     private ?string $sku = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
@@ -38,6 +45,7 @@ class Product
     private ?Category $category = null;
 
     #[ORM\Column]
+    #[Groups(['brand:read'])]
     private ?bool $available = null;
 
     public function getId(): ?int
