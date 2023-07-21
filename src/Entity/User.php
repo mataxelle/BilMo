@@ -20,26 +20,26 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['client:read'])]
+    #[Groups(['user:read', 'client:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Groups(['client:read'])]
+    #[Groups(['user:read', 'client:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Groups(['client:read'])]
+    #[Groups(['user:read', 'client:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Groups(['client:read'])]
+    #[Groups(['user:read', 'client:read'])]
     private ?string $email = null;
 
     public function getId(): ?int

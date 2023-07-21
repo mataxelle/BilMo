@@ -23,20 +23,20 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read', 'user:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read', 'user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read', 'user:read'])]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -52,11 +52,11 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read', 'user:read'])]
     private ?string $phone = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read', 'user:read'])]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: User::class, orphanRemoval: true)]
@@ -181,7 +181,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection<int, User>
      */
     public function getUsers(): Collection
     {
@@ -191,7 +191,7 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
-            $this->users[] = $user;
+            $this->users->add($user);
             $user->setCreatedBy($this);
         }
 
