@@ -23,9 +23,8 @@ class Product
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?string $name = null;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\ManyToOne(targetEntity: Brand::class, inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?Brand $brand = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -40,9 +39,8 @@ class Product
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?string $sku = null;
 
-    #[ORM\ManyToOne(inversedBy: 'products')]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?Category $category = null;
 
     #[ORM\Column]

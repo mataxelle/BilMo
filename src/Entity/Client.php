@@ -8,10 +8,11 @@ use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -22,21 +23,25 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['client:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Groups(['client:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Groups(['client:read'])]
     private ?string $email = null;
 
     #[ORM\Column]
     #[Assert\NotNull()]
+    #[Groups(['client:read'])]
     private array $roles = [];
 
     /**
@@ -47,12 +52,15 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['client:read'])]
     private ?string $phone = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['client:read'])]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: User::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: User::class, orphanRemoval: true)]
+    #[Groups(['client:read'])]
     private Collection $users;
 
     public function __construct()
@@ -173,24 +181,24 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection|User[]
      */
     public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function addUser(User $user): static
+    public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
-            $this->users->add($user);
+            $this->users[] = $user;
             $user->setCreatedBy($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeUser(User $user): self
     {
         if ($this->users->removeElement($user)) {
             // set the owning side to null (unless already changed)

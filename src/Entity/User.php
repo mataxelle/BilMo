@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use App\Entity\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -19,22 +20,26 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['client:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Groups(['client:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]
     #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Groups(['client:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Groups(['client:read'])]
     private ?string $email = null;
 
     public function getId(): ?int
