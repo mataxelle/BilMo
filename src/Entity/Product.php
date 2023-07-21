@@ -16,36 +16,37 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?Brand $brand = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?string $sku = null;
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['brand:read', 'category:read'])]
     private ?Category $category = null;
 
     #[ORM\Column]
-    #[Groups(['brand:read'])]
+    #[Groups(['brand:read', 'category:read'])]
     private ?bool $available = null;
 
     public function getId(): ?int
