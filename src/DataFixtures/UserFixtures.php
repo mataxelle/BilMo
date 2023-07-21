@@ -30,8 +30,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             $user->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
                 ->setEmail('user' . $i . '@' . $client . '.com')
-                ->setCreatedBy($client)
-                ->setUpdatedBy($client);
+                ->setCreatedBy($client);
 
                 $manager->persist($user);
         }

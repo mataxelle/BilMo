@@ -22,6 +22,7 @@ class Brand
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'brand', targetEntity: Product::class, orphanRemoval: true)]
+    #[Groups(['brand:read'])]
     private Collection $products;
 
     public function __construct()
