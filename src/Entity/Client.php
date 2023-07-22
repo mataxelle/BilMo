@@ -97,11 +97,11 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-     /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
+    /**
+    * A visual identifier that represents this user.
+    *
+    * @see UserInterface
+    */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
