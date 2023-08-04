@@ -40,13 +40,25 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByClient(Client $client): array
+    public function findByClient(Client $client, $page, $limit): array
     {
         return $this->createQueryBuilder('u')
-        ->andWhere('u.createdBy = :client')
-        ->setParameter('client', $client)
-        ->getQuery()
-        ->getResult()
+            ->andWhere('u.createdBy = :client')
+            ->setParameter('client', $client)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findAllWithPagination($page, $limit)
+    {
+        return $this->createQueryBuilder('u')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult()
         ;
     }
 

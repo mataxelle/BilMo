@@ -23,9 +23,12 @@ class UserController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste')]
-    public function getUserList(UserRepository $userRepository, SerializerInterface $serializerInterface): JsonResponse
+    public function getUserList(UserRepository $userRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
-        $userList = $userRepository->findAll();
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+
+        $userList = $userRepository->findAllWithPagination($page, $limit);
         $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
@@ -33,9 +36,12 @@ class UserController extends AbstractController
 
     #[Route('/client/{id}/list', name: 'client_list', methods: ['GET'])]
     #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
-    public function getClientUserList(?Client $client, UserRepository $userRepository, SerializerInterface $serializerInterface): JsonResponse
+    public function getClientUserList(?Client $client, UserRepository $userRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
-        $userList = $userRepository->findByClient($client);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+
+        $userList = $userRepository->findByClient($client, $page, $limit);
         $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);

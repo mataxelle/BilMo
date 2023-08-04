@@ -21,9 +21,12 @@ class ClientController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste de clients')]
-    public function getClientList(ClientRepository $clientRepository, SerializerInterface $serializerInterface): JsonResponse
+    public function getClientList(ClientRepository $clientRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
-        $clientList = $clientRepository->findAll();
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 5);
+
+        $clientList = $clientRepository->findAllWithPagination($page, $limit);
         $jsonClientList = $serializerInterface->serialize($clientList, 'json', ['groups' => 'client:read']);
 
         return new JsonResponse($jsonClientList, Response::HTTP_OK, [], true);
