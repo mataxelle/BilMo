@@ -2,10 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +22,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class UserController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste')]
     public function getUserList(UserRepository $userRepository, SerializerInterface $serializerInterface): JsonResponse
     {
         $userList = $userRepository->findAll();
+        $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
+
+        return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/client/{id}/list', name: 'client_list', methods: ['GET'])]
+    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    public function getClientUserList(?Client $client, UserRepository $userRepository, SerializerInterface $serializerInterface): JsonResponse
+    {
+        $userList = $userRepository->findByClient($client);
         $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
@@ -60,6 +74,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
+    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function edit(
         User $user,
         EntityManagerInterface $entityManager,
@@ -81,6 +96,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($user);

@@ -8,6 +8,7 @@ use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,6 +31,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour ajouter un produit')]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
@@ -65,6 +67,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour modifier un produit')]
     public function edit(
         Product $product,
         EntityManagerInterface $entityManager,
@@ -89,6 +92,7 @@ class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer un produit')]
     public function deleteProduct(Product $product, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($product);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,6 +20,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class ClientController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste de clients')]
     public function getClientList(ClientRepository $clientRepository, SerializerInterface $serializerInterface): JsonResponse
     {
         $clientList = $clientRepository->findAll();

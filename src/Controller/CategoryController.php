@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,6 +28,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer une catégorie')]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
@@ -52,6 +54,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour modifier une catégorie')]
     public function edit(
         Category $category,
         EntityManagerInterface $entityManager,
@@ -67,6 +70,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer une catégorie')]
     public function deleteCategory(Category $category, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($category);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Brand;
 use App\Repository\BrandRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,6 +28,7 @@ class BrandController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer une marque')]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
@@ -52,6 +54,7 @@ class BrandController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour modifier une marque')]
     public function edit(
         Brand $brand,
         EntityManagerInterface $entityManager,
@@ -67,6 +70,7 @@ class BrandController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer une marque')]
     public function deleteBrand(Brand $brand, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($brand);
