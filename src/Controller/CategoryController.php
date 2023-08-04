@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/category', name: 'app_category_')]
 class CategoryController extends AbstractController
@@ -33,9 +34,17 @@ class CategoryController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $category = $serializerInterface->deserialize($request->getContent(), Category::class, 'json');
+
+        $errors = $validator->validate($category);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
+
         $entityManager->persist($category);
         $entityManager->flush();
 
@@ -59,9 +68,16 @@ class CategoryController extends AbstractController
         Category $category,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $category = $serializerInterface->deserialize($request->getContent(), Category::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $category]);
+
+        $errors = $validator->validate($category);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
         
         $entityManager->persist($category);
         $entityManager->flush();

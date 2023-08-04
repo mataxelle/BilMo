@@ -27,15 +27,15 @@ class Client implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Assert\Length(min: 2, max: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['client:read', 'user:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Assert\Length(min: 1, max: 55, minMessage: "L'email doit faire au moins {{ limit }} caractères", maxMessage: "L'email ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['client:read', 'user:read'])]
     private ?string $email = null;
 

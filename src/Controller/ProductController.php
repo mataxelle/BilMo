@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/product', name: 'app_product_')]
 class ProductController extends AbstractController
@@ -41,9 +42,16 @@ class ProductController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         BrandRepository $brandRepository,
         CategoryRepository $categoryRepository,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $product = $serializerInterface->deserialize($request->getContent(), Product::class, 'json');
+
+        $errors = $validator->validate($product);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         $brandId = $content['brandId'] ?? -1;
@@ -77,9 +85,16 @@ class ProductController extends AbstractController
         SerializerInterface $serializerInterface,
         BrandRepository $brandRepository,
         CategoryRepository $categoryRepository,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $product = $serializerInterface->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $product]);
+
+        $errors = $validator->validate($product);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         $brandId = $content['brandId'] ?? -1;

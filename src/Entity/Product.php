@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ProductRepository;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -20,6 +21,8 @@ class Product
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: "Un nom de catégorie est obligatoire")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?string $name = null;
 
@@ -28,14 +31,18 @@ class Product
     private ?Brand $brand = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "La description est obligatoire")]
+    #[Assert\Length(min: 1, max: 300, minMessage: "La description doit faire au moins {{ limit }} caractères", maxMessage: "La description ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['product:read','brand:read', 'category:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le prix est obligatoire")]
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?float $price = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le sku est obligatoire")]
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?string $sku = null;
 

@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/client', name: 'app_client_')]
 class ClientController extends AbstractController
@@ -38,9 +39,16 @@ class ClientController extends AbstractController
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
         UserPasswordHasherInterface $userPasswordHasher,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $client = $serializerInterface->deserialize($request->getContent(), Client::class, 'json');
+
+        $errors = $validator->validate($client);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         $password = $content['password'];
@@ -70,9 +78,16 @@ class ClientController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UserPasswordHasherInterface $userPasswordHasher,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $client = $serializerInterface->deserialize($request->getContent(), Client::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $client]);
+
+        $errors = $validator->validate($client);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         if ($content['password']) {
