@@ -23,22 +23,20 @@ class User
     #[Groups(['user:read', 'client:read'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\Length(min: 2, max: 100)]
-    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[ORM\Column(length: 100)]#[Assert\NotBlank(message: "Un prénom est obligatoire")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le prénom doit faire au moins {{ limit }} caractères", maxMessage: "Le prénom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['user:read', 'client:read'])]
     private ?string $firstname = null;
 
-    #[ORM\Column(length: 100)]
-    #[Assert\Length(min: 2, max: 100)]
-    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[ORM\Column(length: 100)]#[Assert\NotBlank(message: "Un nom de catégorie est obligatoire")]
+    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['user:read', 'client:read'])]
     private ?string $lastname = null;
 
     #[ORM\Column(length: 180, unique: true)]
     #[Assert\Length(min: 2, max: 180)]
     #[Assert\Email(message: 'Cet email est invalide')]
-    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
+    #[Assert\NotBlank(message: "Un email est obligatoire")]
     #[Groups(['user:read', 'client:read'])]
     private ?string $email = null;
 

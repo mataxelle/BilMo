@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BrandRepository::class)]
 class Brand
@@ -18,6 +19,8 @@ class Brand
     private ?int $id = null;
 
     #[ORM\Column(length: 55)]
+    #[Assert\NotBlank(message: "Un nom de marque est obligatoire")]
+    #[Assert\Length(min: 1, max: 55, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['brand:read', 'product:read'])]
     private ?string $name = null;
 

@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/brand', name: 'app_brand_')]
 class BrandController extends AbstractController
@@ -33,9 +34,17 @@ class BrandController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $brand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json');
+
+        $errors = $validator->validate($brand);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
+
         $entityManager->persist($brand);
         $entityManager->flush();
 
@@ -59,9 +68,16 @@ class BrandController extends AbstractController
         Brand $brand,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $brand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $brand]);
+
+        $errors = $validator->validate($brand);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
         
         $entityManager->persist($brand);
         $entityManager->flush();

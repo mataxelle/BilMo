@@ -17,6 +17,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/user', name: 'app_user_')]
 class UserController extends AbstractController
@@ -53,9 +54,16 @@ class UserController extends AbstractController
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
         ClientRepository $clientRepository,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $user = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
+
+        $errors = $validator->validate($user);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         $clientId = $content['createdBy'] ?? -1;
@@ -86,9 +94,16 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         ClientRepository $clientRepository,
+        ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $user = $serializerInterface->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+
+        $errors = $validator->validate($user);
+
+        if ($errors->count() > 0) {
+            return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+        }
 
         $content = $request->toArray();
         $clientId = $content['updatedBy'] ?? -1;
