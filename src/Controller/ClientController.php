@@ -5,14 +5,14 @@ namespace App\Controller;
 use App\Entity\Client;
 use App\Repository\ClientRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -28,7 +28,8 @@ class ClientController extends AbstractController
         $limit = $request->get('limit', 5);
 
         $clientList = $clientRepository->findAllWithPagination($page, $limit);
-        $jsonClientList = $serializerInterface->serialize($clientList, 'json', ['groups' => 'client:read']);
+        $context = SerializationContext::create()->setGroups(['client:read']);
+        $jsonClientList = $serializerInterface->serialize($clientList, 'json', $context);
 
         return new JsonResponse($jsonClientList, Response::HTTP_OK, [], true);
     }
@@ -58,7 +59,8 @@ class ClientController extends AbstractController
         $entityManager->persist($client);
         $entityManager->flush();
 
-        $jsonClient = $serializerInterface->serialize($client, 'json', ['groups' => 'client:read']);
+        $context = SerializationContext::create()->setGroups(['client:read']);
+        $jsonClient = $serializerInterface->serialize($client, 'json', $context);
 
         $location = $urlGenerator->generate('app_client_detail', ['id' => $client->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -68,7 +70,8 @@ class ClientController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getClient(Client $client, SerializerInterface $serializerInterface): JsonResponse
     {
-        $jsonClient = $serializerInterface->serialize($client, 'json', ['groups' => 'client:read']);
+        $context = SerializationContext::create()->setGroups(['client:read']);
+        $jsonClient = $serializerInterface->serialize($client, 'json', $context);
         return new JsonResponse($jsonClient, Response::HTTP_CREATED, [], true);
     }
 
@@ -81,7 +84,13 @@ class ClientController extends AbstractController
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
-        $client = $serializerInterface->deserialize($request->getContent(), Client::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $client]);
+        $newClient = $serializerInterface->deserialize($request->getContent(), Client::class, 'json');
+
+        $client->setName($newClient->getName());
+        $client->setEmail($newClient->getEmail());
+        $client->setPassword($newClient->getPassword());
+        $client->setPhone($newClient->getPhone());
+        $client->setDescription($newClient->getDescription());
 
         $errors = $validator->validate($client);
 

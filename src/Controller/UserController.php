@@ -7,15 +7,15 @@ use App\Entity\User;
 use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,7 +30,8 @@ class UserController extends AbstractController
         $limit = $request->get('limit', 10);
 
         $userList = $userRepository->findAllWithPagination($page, $limit);
-        $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
+        $context = SerializationContext::create()->setGroups(['user:read']);
+        $jsonUserList = $serializerInterface->serialize($userList, 'json', $context);
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
     }
@@ -43,7 +44,8 @@ class UserController extends AbstractController
         $limit = $request->get('limit', 10);
 
         $userList = $userRepository->findByClient($client, $page, $limit);
-        $jsonUserList = $serializerInterface->serialize($userList, 'json', ['groups' => 'user:read']);
+        $context = SerializationContext::create()->setGroups(['user:read']);
+        $jsonUserList = $serializerInterface->serialize($userList, 'json', $context);
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
     }
@@ -73,7 +75,8 @@ class UserController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $jsonUser = $serializerInterface->serialize($user, 'json', ['groups' => 'user:read']);
+        $context = SerializationContext::create()->setGroups(['user:read']);
+        $jsonUser = $serializerInterface->serialize($user, 'json', $context);
 
         $location = $urlGenerator->generate('app_user_detail', ['id' => $user->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -83,7 +86,8 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getUserDetail(User $user, SerializerInterface $serializerInterface): JsonResponse
     {
-        $jsonUser = $serializerInterface->serialize($user, 'json', ['groups' => 'user:read']);
+        $context = SerializationContext::create()->setGroups(['user:read']);
+        $jsonUser = $serializerInterface->serialize($user, 'json', $context);
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
@@ -97,7 +101,11 @@ class UserController extends AbstractController
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
-        $user = $serializerInterface->deserialize($request->getContent(), User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
+        $newUser = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
+
+        $user->setFirstname($newUser->getFirstname());
+        $user->setLastname($newUser->getLastname());
+        $user->setEmail($newUser->getEmail());
 
         $errors = $validator->validate($user);
 
@@ -106,7 +114,7 @@ class UserController extends AbstractController
         }
 
         $content = $request->toArray();
-        $clientId = $content['updatedBy'] ?? -1;
+        $clientId = $content['clientId'] ?? -1;
 
         $user->setUpdatedBy($clientRepository->find($clientId));
         
