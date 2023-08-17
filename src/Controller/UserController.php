@@ -84,6 +84,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
+    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function getUserDetail(User $user, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);

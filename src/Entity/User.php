@@ -13,12 +13,29 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @Hateoas\Relation(
+ *      "list",
+ *      href = @Hateoas\Route(
+ *          "app_user_list",
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="user:read")
+ * )
+ * 
+ * @Hateoas\Relation(
+ *      "client_list",
+ *      href = @Hateoas\Route(
+ *          "app_user_client_list",
+ *          parameters = { "id" = "expr(object.getCreatedBy().getId())" }
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="user:read")
+ * )
+ * 
+ * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
  *          "app_user_detail",
  *          parameters = { "id" = "expr(object.getId())" }
  *      ),
- *      exclusion = @Hateoas\Exclusion(groups="user:read")
+ *      exclusion = @Hateoas\Exclusion(groups="user:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
  * 
  * @Hateoas\Relation(
