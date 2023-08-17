@@ -2,48 +2,32 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\User;
-use App\Repository\ClientRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/user', name: 'app_user_')]
 class UserController extends AbstractController
 {
     #[Route('/list', name: 'list', methods: ['GET'])]
-    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste')]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste de clients')]
     public function getUserList(UserRepository $userRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
         $page = $request->get('page', 1);
-        $limit = $request->get('limit', 10);
+        $limit = $request->get('limit', 5);
 
         $userList = $userRepository->findAllWithPagination($page, $limit);
-        $context = SerializationContext::create()->setGroups(['user:read']);
-        $jsonUserList = $serializerInterface->serialize($userList, 'json', $context);
-
-        return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
-    }
-
-    #[Route('/client/{id}/list', name: 'client_list', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
-    public function getClientUserList(?Client $client, UserRepository $userRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
-    {
-        $page = $request->get('page', 1);
-        $limit = $request->get('limit', 10);
-
-        $userList = $userRepository->findByClient($client, $page, $limit);
         $context = SerializationContext::create()->setGroups(['user:read']);
         $jsonUserList = $serializerInterface->serialize($userList, 'json', $context);
 
@@ -55,7 +39,7 @@ class UserController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
-        ClientRepository $clientRepository,
+        UserPasswordHasherInterface $userPasswordHasher,
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
@@ -68,9 +52,9 @@ class UserController extends AbstractController
         }
 
         $content = $request->toArray();
-        $clientId = $content['createdBy'] ?? -1;
+        $password = $content['password'];
 
-        $user->setCreatedBy($clientRepository->find($clientId));
+        $user->setPassword($userPasswordHasher->hashPassword($user, $password));
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -84,8 +68,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
-    public function getUserDetail(User $user, SerializerInterface $serializerInterface): JsonResponse
+    public function getUserDetails(User $user, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);
         $jsonUser = $serializerInterface->serialize($user, 'json', $context);
@@ -93,20 +76,21 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function edit(
         User $user,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
-        ClientRepository $clientRepository,
+        UserPasswordHasherInterface $userPasswordHasher,
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
         $newUser = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
 
-        $user->setFirstname($newUser->getFirstname());
-        $user->setLastname($newUser->getLastname());
+        $user->setName($newUser->getName());
         $user->setEmail($newUser->getEmail());
+        $user->setPassword($newUser->getPassword());
+        $user->setPhone($newUser->getPhone());
+        $user->setDescription($newUser->getDescription());
 
         $errors = $validator->validate($user);
 
@@ -115,9 +99,10 @@ class UserController extends AbstractController
         }
 
         $content = $request->toArray();
-        $clientId = $content['clientId'] ?? -1;
-
-        $user->setUpdatedBy($clientRepository->find($clientId));
+        if ($content['password']) {
+            $password = $content['password'];
+            $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+        }
         
         $entityManager->persist($user);
         $entityManager->flush();
@@ -126,7 +111,6 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($user);

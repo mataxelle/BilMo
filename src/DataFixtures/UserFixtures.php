@@ -3,13 +3,13 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
-use App\Entity\User;
+use App\Entity\Member;
 use DateTime;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-class UserFixtures extends Fixture implements DependentFixtureInterface
+class MemberFixtures extends Fixture implements DependentFixtureInterface
 {
     /**
      * load
@@ -23,16 +23,16 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
         $faker->seed(2);
 
         for ($i = 0; $i < 50; $i++) {
-            $user = new User();
+            $member = new Member();
 
-            $client = $this->getReference(ClientFixtures::getReferenceKey($i % 4));
+            $user = $this->getReference(UserFixtures::getReferenceKey($i % 4));
 
-            $user->setFirstname($faker->firstName())
+            $member->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
-                ->setEmail('user' . $i . '@' . $client . '.com')
-                ->setCreatedBy($client);
+                ->setEmail('member' . $i . '@' . $user . '.com')
+                ->setCreatedBy($user);
 
-                $manager->persist($user);
+                $manager->persist($member);
         }
 
         $manager->flush();
@@ -40,6 +40,6 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [ClientFixtures::class];
+        return [UserFixtures::class];
     }
 }

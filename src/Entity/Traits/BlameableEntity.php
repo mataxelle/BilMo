@@ -2,7 +2,7 @@
 
 namespace App\Entity\Traits;
 
-use App\Entity\Client;
+use App\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation\Groups;
@@ -10,25 +10,25 @@ use JMS\Serializer\Annotation\Groups;
 trait BlameableEntity
 {
     #[ORM\JoinColumn(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[Gedmo\Blameable(on: 'create')]
-    #[Groups(['user:read'])]
-    protected ?Client $createdBy = null;
+    #[Groups(['member:read'])]
+    protected ?User $createdBy = null;
 
     #[ORM\Column(nullable: false)]
-    #[ORM\ManyToOne(targetEntity: Client::class)]
+    #[ORM\ManyToOne(targetEntity: User::class)]
     #[Gedmo\Blameable(on: 'update')]
-    #[Groups(['user:read'])]
-    protected ?Client $updatedBy = null;
+    #[Groups(['member:read'])]
+    protected ?User $updatedBy = null;
 
     /**
      * Sets createdBy.
      *
-     * @param Client $createdBy CreatedBy
+     * @param User $createdBy CreatedBy
      *
      * @return $this
      */
-    public function setCreatedBy(?Client $createdBy): self
+    public function setCreatedBy(?User $createdBy): self
     {
         $this->createdBy = $createdBy;
 
@@ -48,11 +48,11 @@ trait BlameableEntity
     /**
      * Sets updatedBy.
      *
-     * @param Client $updatedBy UpdatedBy
+     * @param User $updatedBy UpdatedBy
      *
      * @return $this
      */
-    public function setUpdatedBy(?Client $updatedBy): self
+    public function setUpdatedBy(?User $updatedBy): self
     {
         $this->updatedBy = $updatedBy;
 
