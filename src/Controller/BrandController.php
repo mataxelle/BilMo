@@ -5,14 +5,14 @@ namespace App\Controller;
 use App\Entity\Brand;
 use App\Repository\BrandRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -23,7 +23,8 @@ class BrandController extends AbstractController
     public function getBrandList(BrandRepository $brandRepository, SerializerInterface $serializerInterface): JsonResponse
     {
         $brandList = $brandRepository->findAll();
-        $jsonBrandList = $serializerInterface->serialize($brandList, 'json', ['groups' => 'brand:read']);
+        $context = SerializationContext::create()->setGroups(['brand:read']);
+        $jsonBrandList = $serializerInterface->serialize($brandList, 'json', $context);
 
         return new JsonResponse($jsonBrandList, Response::HTTP_OK, [], true);
     }
@@ -48,7 +49,8 @@ class BrandController extends AbstractController
         $entityManager->persist($brand);
         $entityManager->flush();
 
-        $jsonBrand = $serializerInterface->serialize($brand, 'json', ['groups' => 'brand:read']);
+        $context = SerializationContext::create()->setGroups(['brand:read']);
+        $jsonBrand = $serializerInterface->serialize($brand, 'json', $context);
 
         $location = $urlGenerator->generate('app_brand_detail', ['id' => $brand->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -58,7 +60,8 @@ class BrandController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getBrand(Brand $brand, SerializerInterface $serializerInterface): JsonResponse
     {
-        $jsonBrand = $serializerInterface->serialize($brand, 'json', ['groups' => 'brand:read']);
+        $context = SerializationContext::create()->setGroups(['brand:read']);
+        $jsonBrand = $serializerInterface->serialize($brand, 'json', $context);
         return new JsonResponse($jsonBrand, Response::HTTP_CREATED, [], true);
     }
 
@@ -71,7 +74,9 @@ class BrandController extends AbstractController
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
-        $brand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $brand]);
+        $newBrand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json');
+        
+        $brand->setName($newBrand->getName());
 
         $errors = $validator->validate($brand);
 

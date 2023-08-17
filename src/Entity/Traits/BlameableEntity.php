@@ -5,17 +5,17 @@ namespace App\Entity\Traits;
 use App\Entity\Client;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 
 trait BlameableEntity
 {
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\JoinColumn(nullable: false)]
     #[ORM\ManyToOne(targetEntity: Client::class)]
     #[Gedmo\Blameable(on: 'create')]
     #[Groups(['user:read'])]
     protected ?Client $createdBy = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(nullable: false)]
     #[ORM\ManyToOne(targetEntity: Client::class)]
     #[Gedmo\Blameable(on: 'update')]
     #[Groups(['user:read'])]

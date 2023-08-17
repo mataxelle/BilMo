@@ -2,20 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Brand;
 use App\Entity\Product;
 use App\Repository\BrandRepository;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -29,7 +28,8 @@ class ProductController extends AbstractController
         $limit = $request->get('limit', 10);
 
         $productList = $productRepository->findAllWithPagination($page, $limit);
-        $jsonProductList = $serializerInterface->serialize($productList, 'json', ['groups' => 'product:read']);
+        $context = SerializationContext::create()->setGroups(['product:read']);
+        $jsonProductList = $serializerInterface->serialize($productList, 'json', $context);
 
         return new JsonResponse($jsonProductList, Response::HTTP_OK, [], true);
     }
@@ -63,7 +63,8 @@ class ProductController extends AbstractController
         $entityManager->persist($product);
         $entityManager->flush();
 
-        $jsonProduct = $serializerInterface->serialize($product, 'json', ['groups' => 'product:read']);
+        $context = SerializationContext::create()->setGroups(['product:read']);
+        $jsonProduct = $serializerInterface->serialize($product, 'json', $context);
 
         $location = $urlGenerator->generate('app_product_detail', ['id' => $product->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -73,7 +74,8 @@ class ProductController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getProduct(Product $product, SerializerInterface $serializerInterface): JsonResponse
     {
-        $jsonProduct = $serializerInterface->serialize($product, 'json', ['groups' => 'product:read']);
+        $context = SerializationContext::create()->setGroups(['product:read']);
+        $jsonProduct = $serializerInterface->serialize($product, 'json', $context);
         return new JsonResponse($jsonProduct, Response::HTTP_CREATED, [], true);
     }
 
@@ -88,10 +90,15 @@ class ProductController extends AbstractController
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
-        $product = $serializerInterface->deserialize($request->getContent(), Product::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $product]);
+        $newProduct = $serializerInterface->deserialize($request->getContent(), Product::class, 'json');
 
+        $product->setName($newProduct->getName());
+        $product->setDescription($newProduct->getDescription());
+        $product->setPrice($newProduct->getPrice());
+        $product->setSku($newProduct->getSku());
+
+        // Errors verifications
         $errors = $validator->validate($product);
-
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
@@ -102,7 +109,7 @@ class ProductController extends AbstractController
 
         $product->setBrand($brandRepository->find($brandId));
         $product->setCategory($categoryRepository->find($categoryId));
-        
+
         $entityManager->persist($product);
         $entityManager->flush();
 

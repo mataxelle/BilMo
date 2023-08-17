@@ -5,14 +5,14 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -23,7 +23,8 @@ class CategoryController extends AbstractController
     public function getCategoryList(CategoryRepository $categoryRepository, SerializerInterface $serializerInterface): JsonResponse
     {
         $categoryList = $categoryRepository->findAll();
-        $jsonCategoryList = $serializerInterface->serialize($categoryList, 'json', ['groups' => 'category:read']);
+        $context = SerializationContext::create()->setGroups(['category:read']);
+        $jsonCategoryList = $serializerInterface->serialize($categoryList, 'json', $context);
 
         return new JsonResponse($jsonCategoryList, Response::HTTP_OK, [], true);
     }
@@ -48,7 +49,8 @@ class CategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        $jsonCategory = $serializerInterface->serialize($category, 'json', ['groups' => 'category:read']);
+        $context = SerializationContext::create()->setGroups(['category:read']);
+        $jsonCategory = $serializerInterface->serialize($category, 'json', $context);
 
         $location = $urlGenerator->generate('app_category_detail', ['id' => $category->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
@@ -58,7 +60,8 @@ class CategoryController extends AbstractController
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getCategory(Category $category, SerializerInterface $serializerInterface): JsonResponse
     {
-        $jsonCategory = $serializerInterface->serialize($category, 'json', ['groups' => 'category:read']);
+        $context = SerializationContext::create()->setGroups(['category:read']);
+        $jsonCategory = $serializerInterface->serialize($category, 'json', $context);
         return new JsonResponse($jsonCategory, Response::HTTP_CREATED, [], true);
     }
 
@@ -71,7 +74,9 @@ class CategoryController extends AbstractController
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
-        $category = $serializerInterface->deserialize($request->getContent(), Category::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $category]);
+        $newCategory = $serializerInterface->deserialize($request->getContent(), Category::class, 'json');
+        
+        $category->setName($newCategory->getName());
 
         $errors = $validator->validate($category);
 
