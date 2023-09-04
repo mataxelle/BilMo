@@ -9,13 +9,13 @@ use JMS\Serializer\Annotation\Groups;
 
 trait BlameableEntity
 {
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[Gedmo\Blameable(on: 'create')]
     #[Groups(['member:read'])]
     protected ?User $createdBy = null;
 
-    #[ORM\Column(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[Gedmo\Blameable(on: 'update')]
     #[Groups(['member:read'])]

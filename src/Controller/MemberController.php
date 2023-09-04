@@ -37,7 +37,7 @@ class MemberController extends AbstractController
     }
 
     #[Route('/user/{id}/list', name: 'user_list', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getUserMemberList(?User $user, MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
         $page = $request->get('page', 1);
@@ -51,11 +51,11 @@ class MemberController extends AbstractController
     }
 
     #[Route('/create', name: 'create', methods: ['POST'])]
+    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
-        UserRepository $userRepository,
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
@@ -67,10 +67,7 @@ class MemberController extends AbstractController
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
 
-        $content = $request->toArray();
-        $userId = $content['createdBy'] ?? -1;
-
-        $member->setCreatedBy($userRepository->find($userId));
+        $member->setCreatedBy($this->getUser());
 
         $entityManager->persist($member);
         $entityManager->flush();
@@ -84,7 +81,7 @@ class MemberController extends AbstractController
     }
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getMemberDetail(Member $member, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['member:read']);
@@ -93,7 +90,7 @@ class MemberController extends AbstractController
     }
 
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function edit(
         Member $member,
         EntityManagerInterface $entityManager,
@@ -107,17 +104,13 @@ class MemberController extends AbstractController
         $member->setFirstname($newMember->getFirstname());
         $member->setLastname($newMember->getLastname());
         $member->setEmail($newMember->getEmail());
+        $member->setUpdatedBy($this->getUser());
 
         $errors = $validator->validate($member);
 
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
-
-        $content = $request->toArray();
-        $userId = $content['userId'] ?? -1;
-
-        $member->setUpdatedBy($userRepository->find($userId));
         
         $entityManager->persist($member);
         $entityManager->flush();
@@ -126,7 +119,7 @@ class MemberController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function deleteMember(Member $member, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($member);

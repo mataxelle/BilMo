@@ -3,14 +3,43 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
-use App\Entity\Member;
-use DateTime;
+use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class MemberFixtures extends Fixture implements DependentFixtureInterface
+class UserFixtures extends Fixture
 {
+    private array $users = [
+        'koryo',
+        'silla',
+        'heisei',
+        'joseon'
+    ];
+
+     /**
+     * passwordHasher
+     *
+     * @var mixed
+     */
+    private $passwordHasher;
+  
+    /**
+     * __construct
+     *
+     * @param  UserPasswordHasherInterface $passwordHasher passwordHasher
+     * @return void
+     */
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+
+    public static function getReferenceKey($key): string
+    {
+        return sprintf('user_%s', $key);
+    }
+
     /**
      * load
      *
@@ -22,24 +51,21 @@ class MemberFixtures extends Fixture implements DependentFixtureInterface
         $faker = Factory::create('fr_FR');
         $faker->seed(2);
 
-        for ($i = 0; $i < 50; $i++) {
-            $member = new Member();
+        foreach ($this->users as $key => $userName) {
+            $user = new User();
+            $user->setName(ucfirst($userName))
+                ->setEmail($userName . '@email.com')
+                ->setRoles(['ROLE_USER'])
+                ->setPhone($faker->phoneNumber())
+                ->setDescription($faker->words(250, true));
 
-            $user = $this->getReference(UserFixtures::getReferenceKey($i % 4));
+            $password = $this->passwordHasher->hashPassword($user, 'azertyuiop');
+            $user->setPassword($password);
 
-            $member->setFirstname($faker->firstName())
-                ->setLastname($faker->lastName())
-                ->setEmail('member' . $i . '@' . $user . '.com')
-                ->setCreatedBy($user);
-
-                $manager->persist($member);
+            $manager->persist($user);
+            $this->addReference(self::getReferenceKey($key), $user);
         }
 
         $manager->flush();
-    }
-
-    public function getDependencies(): array
-    {
-        return [UserFixtures::class];
     }
 }

@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -68,10 +69,11 @@ class UserController extends AbstractController
     }
 
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    public function getUserDetails(User $user, SerializerInterface $serializerInterface): JsonResponse
+    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
+    public function getUserDetails(User $user2, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);
-        $jsonUser = $serializerInterface->serialize($user, 'json', $context);
+        $jsonUser = $serializerInterface->serialize($user2, 'json', $context);
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 

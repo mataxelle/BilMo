@@ -17,16 +17,16 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      href = @Hateoas\Route(
  *          "app_member_list",
  *      ),
- *      exclusion = @Hateoas\Exclusion(groups="member:read")
+ *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
  * 
  * @Hateoas\Relation(
- *      "user_list",
+ *      "member_user_list",
  *      href = @Hateoas\Route(
  *          "app_member_user_list",
  *          parameters = { "id" = "expr(object.getCreatedBy().getId())" }
  *      ),
- *      exclusion = @Hateoas\Exclusion(groups="member:read")
+ *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
  * 
  * @Hateoas\Relation(
@@ -97,7 +97,7 @@ class Member
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): static
+    public function setFirstname(string $firstname): self
     {
         $this->firstname = $firstname;
 
@@ -109,7 +109,7 @@ class Member
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): static
+    public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
 
@@ -121,7 +121,7 @@ class Member
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 

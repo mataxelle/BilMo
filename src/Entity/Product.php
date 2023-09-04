@@ -96,7 +96,7 @@ class Product
         return $this->name;
     }
 
-    public function setName(string $name): static
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -108,7 +108,7 @@ class Product
         return $this->brand;
     }
 
-    public function setBrand(?Brand $brand): static
+    public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
 
@@ -120,7 +120,7 @@ class Product
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -132,7 +132,7 @@ class Product
         return $this->price;
     }
 
-    public function setPrice(float $price): static
+    public function setPrice(float $price): self
     {
         $this->price = $price;
 
@@ -144,7 +144,7 @@ class Product
         return $this->sku;
     }
 
-    public function setSku(string $sku): static
+    public function setSku(string $sku): self
     {
         $this->sku = $sku;
 
@@ -156,7 +156,7 @@ class Product
         return $this->category;
     }
 
-    public function setCategory(?Category $category): static
+    public function setCategory(?Category $category): self
     {
         $this->category = $category;
 
@@ -168,7 +168,7 @@ class Product
         return $this->available;
     }
 
-    public function setAvailable(bool $available): static
+    public function setAvailable(bool $available): self
     {
         $this->available = $available;
 
