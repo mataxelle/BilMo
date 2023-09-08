@@ -18,10 +18,44 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 
 #[Route('/api/member', name: 'app_member_')]
 class MemberController extends AbstractController
 {
+    /**
+     * Get all member list.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Return all member list",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Member::class, groups={"member:read"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="The page we want",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="The number of elements we want to retrive",
+     *     @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  MemberRepository       $memberRepository
+     * @param  SerializerInterface    $serializerInterface
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/list', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste')]
     public function getMemberList(MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
@@ -36,6 +70,39 @@ class MemberController extends AbstractController
         return new JsonResponse($jsonMemberList, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Get one user member list.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Return one user member list",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Member::class, groups={"member:read"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="The page we want",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="The number of elements we want to retrive",
+     *     @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  User                   $user
+     * @param  MemberRepository       $memberRepository
+     * @param  SerializerInterface    $serializerInterface
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/user/{id}/list', name: 'user_list', methods: ['GET'])]
     #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getUserMemberList(?User $user, MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
@@ -50,6 +117,24 @@ class MemberController extends AbstractController
         return new JsonResponse($jsonMemberList, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Create a member. 
+     * Exemple : 
+     * {
+     *     "firstname": "memeber firstname",
+     *     "lastname": "member lastname",
+     *     "email": "Product description."
+     * }
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator
+     * @param  ValidatorInterface     $validator
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/create', name: 'create', methods: ['POST'])]
     #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function create(
@@ -80,6 +165,15 @@ class MemberController extends AbstractController
         return new JsonResponse($jsonMember, Response::HTTP_OK, ['location' => $location], true);
     }
 
+    /**
+     * Get a member.
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  Member                 $member
+     * @param  SerializerInterface    $serializerInterface
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getMemberDetail(Member $member, SerializerInterface $serializerInterface): JsonResponse
@@ -89,13 +183,30 @@ class MemberController extends AbstractController
         return new JsonResponse($jsonMember, Response::HTTP_CREATED, [], true);
     }
 
+    /**
+     * Modify a member. 
+     * Exemple : 
+     * {
+     *     "firstname": "memeber firstnamemodify",
+     *     "lastname": "member lastname",
+     *     "email": "Product description."
+     * }
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator
+     * @param  ValidatorInterface     $validator
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
     #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function edit(
         Member $member,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
-        UserRepository $userRepository,
         ValidatorInterface $validator,
         Request $request): JsonResponse
     {
@@ -118,6 +229,15 @@ class MemberController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Delete a member.
+     * 
+     * @OA\Tag(name="Member")
+     *
+     * @param  Member                    $member
+     * @param  EntityManagerInterface    $entityManager
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function deleteMember(Member $member, EntityManagerInterface $entityManager): JsonResponse
