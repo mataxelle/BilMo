@@ -53,6 +53,7 @@ class UserController extends AbstractController
         }
 
         $content = $request->toArray();
+        $user->setRoles(['ROLE_USER']);
         $password = $content['password'];
 
         $user->setPassword($userPasswordHasher->hashPassword($user, $password));
