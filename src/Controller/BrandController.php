@@ -15,10 +15,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 #[Route('/api/brand', name: 'app_brand_')]
 class BrandController extends AbstractController
 {
+    /**
+     * Get all brand list.
+     * 
+     * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  BrandRepository        $brandRepository
+     * @param  SerializerInterface    $serializerInterface
+     * @return JsonResponse
+     */
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function getBrandList(BrandRepository $brandRepository, SerializerInterface $serializerInterface): JsonResponse
     {
@@ -29,6 +43,24 @@ class BrandController extends AbstractController
         return new JsonResponse($jsonBrandList, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Create a brand. 
+     * Exemple : 
+     * {
+     *     "name": "Brandname"
+     * }
+     * 
+     * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator
+     * @param  ValidatorInterface     $validator
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/create', name: 'create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer une marque')]
     public function create(
@@ -57,6 +89,17 @@ class BrandController extends AbstractController
         return new JsonResponse($jsonBrand, Response::HTTP_OK, ['location' => $location], true);
     }
 
+    /**
+     * Get a brand.
+     * 
+     * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  Brand                  $brand
+     * @param  SerializerInterface    $serializerInterface
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
     public function getBrand(Brand $brand, SerializerInterface $serializerInterface): JsonResponse
     {
@@ -65,6 +108,23 @@ class BrandController extends AbstractController
         return new JsonResponse($jsonBrand, Response::HTTP_CREATED, [], true);
     }
 
+    /**
+     * Modify a brand.
+     * Exemple : 
+     * {
+     *     "name": "Brandnamemodify"
+     * }
+     * 
+     * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  Brand                  $brand
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  ValidatorInterface     $validator
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour modifier une marque')]
     public function edit(
@@ -90,6 +150,17 @@ class BrandController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Delete a brand.
+     * 
+     * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  Brand                     $brand
+     * @param  EntityManagerInterface    $entityManager
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour supprimer une marque')]
     public function deleteBrand(Brand $brand, EntityManagerInterface $entityManager): JsonResponse

@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +16,47 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 #[Route('/api/user', name: 'app_user_')]
 class UserController extends AbstractController
 {
+    /**
+     * Get all user list.
+     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Return all user list",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"user:read"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="The page we want",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="The number of elements we want to retrive",
+     *     @OA\Schema(type="int")
+     * )
+     * 
+     * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  UserRepository         $userRepository
+     * @param  SerializerInterface    $serializerInterface
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/list', name: 'list', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour afficher la liste de clients')]
     public function getUserList(UserRepository $userRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
@@ -35,6 +71,28 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Create a user. 
+     * Exemple : 
+     * {
+     *     "name": "User name",
+     *     "password": "password",
+     *     "phone": "0987654321",
+     *     "description": "User description",
+     * }
+     * 
+     * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator
+     * @param  UserPasswordHasherInterface $userPasswordHasher
+     * @param  ValidatorInterface     $validator
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function create(
         EntityManagerInterface $entityManager,
@@ -69,8 +127,19 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_OK, ['location' => $location], true);
     }
 
+    /**
+     * Get a user.
+     * 
+     * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  User                   $user2
+     * @param  SerializerInterface    $serializerInterface
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
+    //[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function getUserDetails(User $user2, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);
@@ -78,6 +147,27 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUser, Response::HTTP_CREATED, [], true);
     }
 
+    /**
+     * Modify a user. 
+     * Exemple : 
+     * {
+     *     "name": "User namemodify",
+     *     "password": "password",
+     *     "phone": "0987654321",
+     *     "description": "User description",
+     * }
+     * 
+     * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  User                   $user
+     * @param  EntityManagerInterface $entityManager
+     * @param  SerializerInterface    $serializerInterface
+     * @param  ValidatorInterface     $validator
+     * @param  Request                $request
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
     public function edit(
         User $user,
@@ -113,6 +203,17 @@ class UserController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Delete a user.
+     * 
+     * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
+     *
+     * @param  User                      $user
+     * @param  EntityManagerInterface    $entityManager
+     * @return JsonResponse
+     */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
