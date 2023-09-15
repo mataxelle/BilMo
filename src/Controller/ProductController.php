@@ -35,6 +35,7 @@ class ProductController extends AbstractController
      *        @OA\Items(ref=@Model(type=Product::class, groups={"product:read"}))
      *     )
      * )
+     * 
      * @OA\Parameter(
      *     name="page",
      *     in="query",
@@ -48,7 +49,10 @@ class ProductController extends AbstractController
      *     description="The number of elements we want to retrive",
      *     @OA\Schema(type="int")
      * )
+     * 
      * @OA\Tag(name="Product")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  ProductRepository      $productRepository
      * @param  SerializerInterface    $serializerInterface
@@ -82,6 +86,8 @@ class ProductController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Product")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -133,6 +139,8 @@ class ProductController extends AbstractController
      * Get a product.
      * 
      * @OA\Tag(name="Product")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Product                $product
      * @param  SerializerInterface    $serializerInterface
@@ -160,6 +168,8 @@ class ProductController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Product")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -211,6 +221,8 @@ class ProductController extends AbstractController
      * Delete a product.
      * 
      * @OA\Tag(name="Product")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Product                   $product
      * @param  EntityManagerInterface    $entityManager

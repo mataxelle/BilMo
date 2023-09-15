@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,6 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 
 #[Route('/api/member', name: 'app_member_')]
@@ -50,6 +50,8 @@ class MemberController extends AbstractController
      * )
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  MemberRepository       $memberRepository
      * @param  SerializerInterface    $serializerInterface
@@ -96,6 +98,8 @@ class MemberController extends AbstractController
      * )
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  User                   $user
      * @param  MemberRepository       $memberRepository
@@ -104,7 +108,7 @@ class MemberController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/user/{id}/list', name: 'user_list', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
+    //#[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getUserMemberList(?User $user, MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
         $page = $request->get('page', 1);
@@ -127,6 +131,8 @@ class MemberController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -136,7 +142,7 @@ class MemberController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
-    #[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    //#[Security("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
@@ -169,13 +175,15 @@ class MemberController extends AbstractController
      * Get a member.
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Member                 $member
      * @param  SerializerInterface    $serializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
+    //#[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function getMemberDetail(Member $member, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['member:read']);
@@ -193,6 +201,8 @@ class MemberController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -202,7 +212,7 @@ class MemberController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
-    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
+    //#[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function edit(
         Member $member,
         EntityManagerInterface $entityManager,
@@ -233,13 +243,15 @@ class MemberController extends AbstractController
      * Delete a member.
      * 
      * @OA\Tag(name="Member")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Member                    $member
      * @param  EntityManagerInterface    $entityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
+    //#[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')")]
     public function deleteMember(Member $member, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($member);

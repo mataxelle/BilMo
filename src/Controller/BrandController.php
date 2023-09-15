@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 #[Route('/api/brand', name: 'app_brand_')]
 class BrandController extends AbstractController
@@ -24,6 +26,8 @@ class BrandController extends AbstractController
      * Get all brand list.
      * 
      * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  BrandRepository        $brandRepository
      * @param  SerializerInterface    $serializerInterface
@@ -47,6 +51,8 @@ class BrandController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -87,6 +93,8 @@ class BrandController extends AbstractController
      * Get a brand.
      * 
      * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Brand                  $brand
      * @param  SerializerInterface    $serializerInterface
@@ -108,6 +116,8 @@ class BrandController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Brand                  $brand
      * @param  EntityManagerInterface $entityManager
@@ -144,6 +154,8 @@ class BrandController extends AbstractController
      * Delete a brand.
      * 
      * @OA\Tag(name="Brand")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Brand                     $brand
      * @param  EntityManagerInterface    $entityManager

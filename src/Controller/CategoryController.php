@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 #[Route('/api/category', name: 'app_category_')]
 class CategoryController extends AbstractController
@@ -24,6 +26,8 @@ class CategoryController extends AbstractController
      * Get all category list.
      * 
      * @OA\Tag(name="Category")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  CategoryRepository     $categoryRepository
      * @param  SerializerInterface    $serializerInterface
@@ -47,6 +51,8 @@ class CategoryController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Category")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -87,6 +93,8 @@ class CategoryController extends AbstractController
      * Get a category.
      * 
      * @OA\Tag(name="Category")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Category               $category
      * @param  SerializerInterface    $serializerInterface
@@ -108,6 +116,8 @@ class CategoryController extends AbstractController
      * }
      * 
      * @OA\Tag(name="Category")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -145,6 +155,8 @@ class CategoryController extends AbstractController
      * Delete a category.
      * 
      * @OA\Tag(name="Category")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  Category                  $category
      * @param  EntityManagerInterface    $entityManager

@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 
 #[Route('/api/user', name: 'app_user_')]
@@ -49,6 +49,8 @@ class UserController extends AbstractController
      * )
      * 
      * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  UserRepository         $userRepository
      * @param  SerializerInterface    $serializerInterface
@@ -76,10 +78,12 @@ class UserController extends AbstractController
      *     "name": "User name",
      *     "password": "password",
      *     "phone": "0987654321",
-     *     "descriptiob": "User description",
+     *     "description": "User description",
      * }
      * 
      * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface $entityManager
      * @param  SerializerInterface    $serializerInterface
@@ -127,13 +131,15 @@ class UserController extends AbstractController
      * Get a user.
      * 
      * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  User                   $user2
      * @param  SerializerInterface    $serializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
+    //[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function getUserDetails(User $user2, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);
@@ -148,10 +154,12 @@ class UserController extends AbstractController
      *     "name": "User namemodify",
      *     "password": "password",
      *     "phone": "0987654321",
-     *     "descriptiob": "User description",
+     *     "description": "User description",
      * }
      * 
      * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  User                   $user
      * @param  EntityManagerInterface $entityManager
@@ -199,6 +207,8 @@ class UserController extends AbstractController
      * Delete a user.
      * 
      * @OA\Tag(name="User")
+     * 
+     * @Security(name="Bearer")
      *
      * @param  User                      $user
      * @param  EntityManagerInterface    $entityManager
