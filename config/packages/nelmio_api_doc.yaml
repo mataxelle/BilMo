@@ -40,6 +40,7 @@ nelmio_api_doc:
                             default: user@email.com
                         password:
                             type: string
+                            format: password
                             default: password
             securitySchemes:
                 Bearer:
