@@ -173,7 +173,6 @@ class ProductController extends AbstractController
      *
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
      * @param  BrandRepository        $brandRepository     BrandRepository
      * @param  CategoryRepository     $categoryRepository  CategoryRepository
      * @param  ValidatorInterface     $validator           Validator

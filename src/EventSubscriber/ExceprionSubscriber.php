@@ -9,7 +9,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceprionSubscriber implements EventSubscriberInterface
-{
+{    
+    /**
+     * OnKernelException
+     *
+     * @param  ExceptionEvent $event event
+     * @return void
+     */
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
@@ -31,10 +37,13 @@ class ExceprionSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * GetSubscribedEvents
+     *
+     * @return array
+     */
     public static function getSubscribedEvents(): array
     {
-        return [
-            KernelEvents::EXCEPTION => 'onKernelException',
-        ];
+        return [KernelEvents::EXCEPTION => 'onKernelException'];
     }
 }

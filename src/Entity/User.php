@@ -57,7 +57,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use TimestampableEntity;
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -168,10 +168,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-    * A visual identifier that represents this user.
-    *
-    * @see UserInterface
-    */
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
@@ -183,7 +183,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -210,6 +210,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
+    /**
+     * Set password
+     *
+     * @param  string $password Password
+     * @return self
+     */
     public function setPassword(string $password): self
     {
         $this->password = $password;
@@ -305,7 +311,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeMember(Member $member): self
     {
         if ($this->members->removeElement($member)) {
-            // set the owning side to null (unless already changed)
+            // Set the owning side to null (unless already changed)
             if ($member->getCreatedBy() === $this) {
                 $member->setCreatedBy(null);
             }

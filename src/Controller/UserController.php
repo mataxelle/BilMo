@@ -85,12 +85,12 @@ class UserController extends AbstractController
      *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface      $entityManager           EntityManager
-     * @param  SerializerInterface         $serializerInterface     SerializerInterface
-     * @param  UrlGeneratorInterface       $urlGenerator            UrlGenerator
-     * @param  UserPasswordHasherInterface $userPasswordHasher      userPasswordHasher
-     * @param  ValidatorInterface          $validator               Validator
-     * @param  Request                     $request                 Request
+     * @param  EntityManagerInterface      $entityManager       EntityManager
+     * @param  SerializerInterface         $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface       $urlGenerator        UrlGenerator
+     * @param  UserPasswordHasherInterface $userPasswordHasher  userPasswordHasher
+     * @param  ValidatorInterface          $validator           Validator
+     * @param  Request                     $request             Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]

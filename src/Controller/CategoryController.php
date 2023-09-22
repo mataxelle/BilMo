@@ -119,9 +119,9 @@ class CategoryController extends AbstractController
      *
      * @Security(name="Bearer")
      *
+     * @param  Category               $category            Category
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
      * @param  ValidatorInterface     $validator           Validator
      * @param  Request                $request             Request
      * @return JsonResponse

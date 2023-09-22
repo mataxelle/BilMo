@@ -61,7 +61,7 @@ class UserFixtures extends Fixture
         $faker = Factory::create('fr_FR');
         $faker->seed(2);
 
-        // User admin fixtures
+        // User admin fixtures.
         $admin = new User();
 
         $admin->setName('admin')

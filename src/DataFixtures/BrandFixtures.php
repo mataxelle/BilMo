@@ -9,7 +9,7 @@ use Faker\Factory;
 
 class BrandFixtures extends Fixture
 {
-    private array $brands = 
+    private array $brands =
     [
         'Samsung',
         'Apple',

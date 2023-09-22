@@ -43,7 +43,7 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
-    
+
     /**
      * GetDependencies
      *
