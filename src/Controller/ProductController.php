@@ -26,7 +26,7 @@ class ProductController extends AbstractController
 {
     /**
      * Get all product list.
-     * 
+     *
      * @OA\Response(
      *     response=200,
      *     description="Return all product list",
@@ -35,7 +35,7 @@ class ProductController extends AbstractController
      *        @OA\Items(ref=@Model(type=Product::class, groups={"product:read"}))
      *     )
      * )
-     * 
+     *
      * @OA\Parameter(
      *     name="page",
      *     in="query",
@@ -49,14 +49,14 @@ class ProductController extends AbstractController
      *     description="The number of elements we want to retrive",
      *     @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  ProductRepository      $productRepository
-     * @param  SerializerInterface    $serializerInterface
-     * @param  Request                $request
+     * @param  ProductRepository   $productRepository   ProductRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
+     * @param  Request             $request             Request
      * @return JsonResponse
      */
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -84,18 +84,18 @@ class ProductController extends AbstractController
      *     "sku": "1069456847675",
      *     "available": true
      * }
-     * 
+     *
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  BrandRepository        $brandRepository
-     * @param  CategoryRepository     $categoryRepository
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  BrandRepository        $brandRepository     BrandRepository
+     * @param  CategoryRepository     $categoryRepository  CategoryRepository
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -107,8 +107,8 @@ class ProductController extends AbstractController
         BrandRepository $brandRepository,
         CategoryRepository $categoryRepository,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $product = $serializerInterface->deserialize($request->getContent(), Product::class, 'json');
 
         $errors = $validator->validate($product);
@@ -137,13 +137,13 @@ class ProductController extends AbstractController
 
     /**
      * Get a product.
-     * 
+     *
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Product                $product
-     * @param  SerializerInterface    $serializerInterface
+     * @param  Product             $product             Product
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
@@ -166,18 +166,18 @@ class ProductController extends AbstractController
      *     "sku": "1069456847675",
      *     "available": true
      * }
-     * 
+     *
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  BrandRepository        $brandRepository
-     * @param  CategoryRepository     $categoryRepository
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  BrandRepository        $brandRepository     BrandRepository
+     * @param  CategoryRepository     $categoryRepository  CategoryRepository
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
@@ -189,8 +189,8 @@ class ProductController extends AbstractController
         BrandRepository $brandRepository,
         CategoryRepository $categoryRepository,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $newProduct = $serializerInterface->deserialize($request->getContent(), Product::class, 'json');
 
         $product->setName($newProduct->getName());
@@ -219,13 +219,13 @@ class ProductController extends AbstractController
 
     /**
      * Delete a product.
-     * 
+     *
      * @OA\Tag(name="Product")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Product                   $product
-     * @param  EntityManagerInterface    $entityManager
+     * @param  Product                $product       Product
+     * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

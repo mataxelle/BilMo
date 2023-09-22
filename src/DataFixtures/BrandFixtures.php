@@ -9,7 +9,8 @@ use Faker\Factory;
 
 class BrandFixtures extends Fixture
 {
-    private array $brands = [
+    private array $brands = 
+    [
         'Samsung',
         'Apple',
         'Huawei',
@@ -25,9 +26,10 @@ class BrandFixtures extends Fixture
     }
 
     /**
-     * load
+     * Loading
      *
      * @param  ObjectManager $manager Manager
+     *
      * @return void
      */
     public function load(ObjectManager $manager): void

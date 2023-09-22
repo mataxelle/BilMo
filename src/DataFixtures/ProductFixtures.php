@@ -4,7 +4,6 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\Product;
-use DateTime;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -12,9 +11,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 class ProductFixtures extends Fixture implements DependentFixtureInterface
 {
     /**
-     * load
+     * Loading
      *
-     * @param  ObjectManager $manager Manager
+     * @param ObjectManager $manager Manager
+     *
      * @return void
      */
     public function load(ObjectManager $manager): void
@@ -43,7 +43,12 @@ class ProductFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
-
+    
+    /**
+     * GetDependencies
+     *
+     * @return array
+     */
     public function getDependencies(): array
     {
         return [BrandFixtures::class, CategoryFixtures::class];

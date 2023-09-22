@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="brand:read")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "update",
  *      href = @Hateoas\Route(
@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="brand:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
@@ -58,21 +58,42 @@ class Brand
     #[Groups(['brand:read'])]
     private Collection $products;
 
+    /**
+     * Constructor
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->products = new ArrayCollection();
     }
 
+    /**
+     * Get id
+     *
+     * @return int
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * Set name
+     *
+     * @param  string $name Name
+     * @return self
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -88,6 +109,12 @@ class Brand
         return $this->products;
     }
 
+    /**
+     * Add product
+     *
+     * @param  Product $product Product
+     * @return self
+     */
     public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
@@ -98,6 +125,12 @@ class Brand
         return $this;
     }
 
+    /**
+     * Remove product
+     *
+     * @param  Product $product Product
+     * @return self
+     */
     public function removeProduct(Product $product): self
     {
         if ($this->products->removeElement($product)) {

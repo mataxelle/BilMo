@@ -23,7 +23,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="user:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="user:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "update",
  *      href = @Hateoas\Route(
@@ -41,7 +41,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="user:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
@@ -101,21 +101,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private Collection $members;
 
+    /**
+     * Constructor
+     *
+     * @return void
+     */
     public function __construct()
     {
         $this->members = new ArrayCollection();
     }
 
+    /**
+     * Get id
+     *
+     * @return int
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * Set name
+     *
+     * @param  string $name Name
+     * @return self
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -123,11 +144,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Get email
+     *
+     * @return string
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * Set email
+     *
+     * @param  string $email Email
+     * @return self
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -158,7 +190,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * setRoles
+     * Set Roles
      *
      * @param  array $roles Roles
      * @return self
@@ -194,11 +226,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * Get phone
+     *
+     * @return string
+     */
     public function getPhone(): ?string
     {
         return $this->phone;
     }
 
+    /**
+     * Set phone
+     *
+     * @param  string $phone Phone
+     * @return self
+     */
     public function setPhone(string $phone): self
     {
         $this->phone = $phone;
@@ -206,11 +249,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Get description
+     *
+     * @return string
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * Set description
+     *
+     * @param  string $description Description
+     * @return self
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -226,6 +280,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->members;
     }
 
+    /**
+     * Add member
+     *
+     * @param  Member $member Member
+     * @return self
+     */
     public function addMember(Member $member): self
     {
         if (!$this->members->contains($member)) {
@@ -236,6 +296,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Remove member
+     *
+     * @param  Member $member Member
+     * @return self
+     */
     public function removeMember(Member $member): self
     {
         if ($this->members->removeElement($member)) {

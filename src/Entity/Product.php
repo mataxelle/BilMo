@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="product:read")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "update",
  *      href = @Hateoas\Route(
@@ -28,7 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="product:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
@@ -86,16 +86,32 @@ class Product
     #[Groups(['product:read', 'brand:read', 'category:read'])]
     private ?bool $available = null;
 
+    /**
+     * Get id
+     *
+     * @return int
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * Set name
+     *
+     * @param  string $name Name
+     * @return self
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -103,11 +119,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get brand
+     *
+     * @return Brand
+     */
     public function getBrand(): ?Brand
     {
         return $this->brand;
     }
 
+    /**
+     * Set brand
+     *
+     * @param  Brand $brand Brand
+     * @return self
+     */
     public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
@@ -115,11 +142,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get description
+     *
+     * @return string
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * Set description
+     *
+     * @param  string $description Description
+     * @return self
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -127,11 +165,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get price
+     *
+     * @return float
+     */
     public function getPrice(): ?float
     {
         return $this->price;
     }
 
+    /**
+     * Set price
+     *
+     * @param  float $price Price
+     * @return self
+     */
     public function setPrice(float $price): self
     {
         $this->price = $price;
@@ -139,11 +188,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get sku
+     *
+     * @return string
+     */
     public function getSku(): ?string
     {
         return $this->sku;
     }
 
+    /**
+     * Set sku
+     *
+     * @param  string $sku Sku
+     * @return self
+     */
     public function setSku(string $sku): self
     {
         $this->sku = $sku;
@@ -151,11 +211,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get category
+     *
+     * @return Category
+     */
     public function getCategory(): ?Category
     {
         return $this->category;
     }
 
+    /**
+     * Set category
+     *
+     * @param  Category $category Category
+     * @return self
+     */
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
@@ -163,11 +234,22 @@ class Product
         return $this;
     }
 
+    /**
+     * Get available
+     *
+     * @return boolean
+     */
     public function isAvailable(): ?bool
     {
         return $this->available;
     }
 
+    /**
+     * Set available
+     *
+     * @param  boolean $available Available
+     * @return self
+     */
     public function setAvailable(bool $available): self
     {
         $this->available = $available;

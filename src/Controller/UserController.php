@@ -25,7 +25,7 @@ class UserController extends AbstractController
 {
     /**
      * Get all user list.
-     * 
+     *
      * @OA\Response(
      *     response=200,
      *     description="Return all user list",
@@ -47,14 +47,14 @@ class UserController extends AbstractController
      *     description="The number of elements we want to retrive",
      *     @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  UserRepository         $userRepository
-     * @param  SerializerInterface    $serializerInterface
-     * @param  Request                $request
+     * @param  UserRepository      $userRepository      UserRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
+     * @param  Request             $request             Request
      * @return JsonResponse
      */
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -80,17 +80,17 @@ class UserController extends AbstractController
      *     "phone": "0987654321",
      *     "description": "User description",
      * }
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  UserPasswordHasherInterface $userPasswordHasher
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface      $entityManager           EntityManager
+     * @param  SerializerInterface         $serializerInterface     SerializerInterface
+     * @param  UrlGeneratorInterface       $urlGenerator            UrlGenerator
+     * @param  UserPasswordHasherInterface $userPasswordHasher      userPasswordHasher
+     * @param  ValidatorInterface          $validator               Validator
+     * @param  Request                     $request                 Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -100,8 +100,8 @@ class UserController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         UserPasswordHasherInterface $userPasswordHasher,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $user = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
 
         $errors = $validator->validate($user);
@@ -129,13 +129,13 @@ class UserController extends AbstractController
 
     /**
      * Get a user.
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  User                   $user2
-     * @param  SerializerInterface    $serializerInterface
+     * @param  User                $user2               User2
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
@@ -156,16 +156,16 @@ class UserController extends AbstractController
      *     "phone": "0987654321",
      *     "description": "User description",
      * }
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  User                   $user
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  User                   $user                User
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
@@ -175,8 +175,8 @@ class UserController extends AbstractController
         SerializerInterface $serializerInterface,
         UserPasswordHasherInterface $userPasswordHasher,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $newUser = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
 
         $user->setName($newUser->getName());
@@ -196,7 +196,7 @@ class UserController extends AbstractController
             $password = $content['password'];
             $user->setPassword($userPasswordHasher->hashPassword($user, $password));
         }
-        
+
         $entityManager->persist($user);
         $entityManager->flush();
 
@@ -205,13 +205,13 @@ class UserController extends AbstractController
 
     /**
      * Delete a user.
-     * 
+     *
      * @OA\Tag(name="User")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  User                      $user
-     * @param  EntityManagerInterface    $entityManager
+     * @param  User                   $user          User
+     * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

@@ -24,13 +24,13 @@ class CategoryController extends AbstractController
 {
     /**
      * Get all category list.
-     * 
+     *
      * @OA\Tag(name="Category")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  CategoryRepository     $categoryRepository
-     * @param  SerializerInterface    $serializerInterface
+     * @param  CategoryRepository  $categoryRepository  CategoryRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -49,16 +49,16 @@ class CategoryController extends AbstractController
      * {
      *     "name": "Categoryname"
      * }
-     * 
+     *
      * @OA\Tag(name="Category")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -68,8 +68,8 @@ class CategoryController extends AbstractController
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $category = $serializerInterface->deserialize($request->getContent(), Category::class, 'json');
 
         $errors = $validator->validate($category);
@@ -91,13 +91,13 @@ class CategoryController extends AbstractController
 
     /**
      * Get a category.
-     * 
+     *
      * @OA\Tag(name="Category")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Category               $category
-     * @param  SerializerInterface    $serializerInterface
+     * @param  Category            $category            Category
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
@@ -114,16 +114,16 @@ class CategoryController extends AbstractController
      * {
      *     "name": "Categorynamemodify"
      * }
-     * 
+     *
      * @OA\Tag(name="Category")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
@@ -133,10 +133,10 @@ class CategoryController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $newCategory = $serializerInterface->deserialize($request->getContent(), Category::class, 'json');
-        
+
         $category->setName($newCategory->getName());
 
         $errors = $validator->validate($category);
@@ -144,7 +144,7 @@ class CategoryController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
-        
+
         $entityManager->persist($category);
         $entityManager->flush();
 
@@ -153,13 +153,13 @@ class CategoryController extends AbstractController
 
     /**
      * Delete a category.
-     * 
+     *
      * @OA\Tag(name="Category")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Category                  $category
-     * @param  EntityManagerInterface    $entityManager
+     * @param  Category               $category      Category
+     * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

@@ -19,7 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "member_user_list",
  *      href = @Hateoas\Route(
@@ -28,7 +28,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
@@ -37,7 +37,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "update",
  *      href = @Hateoas\Route(
@@ -46,7 +46,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="member:read", excludeIf = "expr(not is_granted('ROLE_ADMIN'))")
  * )
- * 
+ *
  * @Hateoas\Relation(
  *      "delete",
  *      href = @Hateoas\Route(
@@ -87,16 +87,32 @@ class Member
     #[Groups(['member:read', 'user:read'])]
     private ?string $email = null;
 
+    /**
+     * Get id
+     *
+     * @return int
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * Get firstname
+     *
+     * @return string
+     */
     public function getFirstname(): ?string
     {
         return $this->firstname;
     }
 
+    /**
+     * Set firstname
+     *
+     * @param  string $firstname Firstname
+     * @return self
+     */
     public function setFirstname(string $firstname): self
     {
         $this->firstname = $firstname;
@@ -104,11 +120,22 @@ class Member
         return $this;
     }
 
+    /**
+     * Get lastname
+     *
+     * @return string
+     */
     public function getLastname(): ?string
     {
         return $this->lastname;
     }
 
+    /**
+     * Set lastname
+     *
+     * @param  string $lastname Lastname
+     * @return self
+     */
     public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
@@ -116,11 +143,22 @@ class Member
         return $this;
     }
 
+    /**
+     * Get email
+     *
+     * @return string
+     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
+    /**
+     * Set email
+     *
+     * @param  string $email Email
+     * @return self
+     */
     public function setEmail(string $email): self
     {
         $this->email = $email;

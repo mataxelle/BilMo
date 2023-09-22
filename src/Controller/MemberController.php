@@ -26,7 +26,7 @@ class MemberController extends AbstractController
 {
     /**
      * Get all member list.
-     * 
+     *
      * @OA\Response(
      *     response=200,
      *     description="Return all member list",
@@ -48,14 +48,14 @@ class MemberController extends AbstractController
      *     description="The number of elements we want to retrive",
      *     @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  MemberRepository       $memberRepository
-     * @param  SerializerInterface    $serializerInterface
-     * @param  Request                $request
+     * @param  MemberRepository    $memberRepository    MemberRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
+     * @param  Request             $request             Request
      * @return JsonResponse
      */
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -74,7 +74,7 @@ class MemberController extends AbstractController
 
     /**
      * Get one user member list.
-     * 
+     *
      * @OA\Response(
      *     response=200,
      *     description="Return one user member list",
@@ -96,15 +96,15 @@ class MemberController extends AbstractController
      *     description="The number of elements we want to retrive",
      *     @OA\Schema(type="int")
      * )
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  User                   $user
-     * @param  MemberRepository       $memberRepository
-     * @param  SerializerInterface    $serializerInterface
-     * @param  Request                $request
+     * @param  User                $user                User
+     * @param  MemberRepository    $memberRepository    MemberRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
+     * @param  Request             $request             Request
      * @return JsonResponse
      */
     #[Route('/user/{id}/list', name: 'user_list', methods: ['GET'])]
@@ -129,16 +129,16 @@ class MemberController extends AbstractController
      *     "lastname": "member lastname",
      *     "email": "Product description."
      * }
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -148,8 +148,8 @@ class MemberController extends AbstractController
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $member = $serializerInterface->deserialize($request->getContent(), Member::class, 'json');
 
         $errors = $validator->validate($member);
@@ -173,13 +173,13 @@ class MemberController extends AbstractController
 
     /**
      * Get a member.
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Member                 $member
-     * @param  SerializerInterface    $serializerInterface
+     * @param  Member              $member              Member
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
@@ -199,16 +199,16 @@ class MemberController extends AbstractController
      *     "lastname": "member lastname",
      *     "email": "Product description."
      * }
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
@@ -218,8 +218,8 @@ class MemberController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $newMember = $serializerInterface->deserialize($request->getContent(), Member::class, 'json');
 
         $member->setFirstname($newMember->getFirstname());
@@ -232,7 +232,7 @@ class MemberController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
-        
+
         $entityManager->persist($member);
         $entityManager->flush();
 
@@ -241,13 +241,13 @@ class MemberController extends AbstractController
 
     /**
      * Delete a member.
-     * 
+     *
      * @OA\Tag(name="Member")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Member                    $member
-     * @param  EntityManagerInterface    $entityManager
+     * @param  Member                 $member        Member
+     * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

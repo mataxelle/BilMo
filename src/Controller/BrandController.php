@@ -24,13 +24,13 @@ class BrandController extends AbstractController
 {
     /**
      * Get all brand list.
-     * 
+     *
      * @OA\Tag(name="Brand")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  BrandRepository        $brandRepository
-     * @param  SerializerInterface    $serializerInterface
+     * @param  BrandRepository     $brandRepository     BrandRepository
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/list', name: 'list', methods: ['GET'])]
@@ -49,16 +49,16 @@ class BrandController extends AbstractController
      * {
      *     "name": "Brandname"
      * }
-     * 
+     *
      * @OA\Tag(name="Brand")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  UrlGeneratorInterface  $urlGenerator
-     * @param  ValidatorInterface     $validator
-     * @param  Request                $request
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
+     * @param  ValidatorInterface     $validator           Validator
+     * @param  Request                $request             Request
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
@@ -68,8 +68,8 @@ class BrandController extends AbstractController
         SerializerInterface $serializerInterface,
         UrlGeneratorInterface $urlGenerator,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $brand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json');
 
         $errors = $validator->validate($brand);
@@ -91,13 +91,13 @@ class BrandController extends AbstractController
 
     /**
      * Get a brand.
-     * 
+     *
      * @OA\Tag(name="Brand")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Brand                  $brand
-     * @param  SerializerInterface    $serializerInterface
+     * @param  Brand               $brand               Brand
+     * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
@@ -114,15 +114,15 @@ class BrandController extends AbstractController
      * {
      *     "name": "Brandnamemodify"
      * }
-     * 
+     *
      * @OA\Tag(name="Brand")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Brand                  $brand
-     * @param  EntityManagerInterface $entityManager
-     * @param  SerializerInterface    $serializerInterface
-     * @param  ValidatorInterface     $validator
+     * @param  Brand                  $brand               Brand
+     * @param  EntityManagerInterface $entityManager       EntityManager
+     * @param  SerializerInterface    $serializerInterface SerializerInterface
+     * @param  ValidatorInterface     $validator           Validator
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
@@ -132,10 +132,10 @@ class BrandController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         ValidatorInterface $validator,
-        Request $request): JsonResponse
-    {
+        Request $request
+    ): JsonResponse {
         $newBrand = $serializerInterface->deserialize($request->getContent(), Brand::class, 'json');
-        
+
         $brand->setName($newBrand->getName());
 
         $errors = $validator->validate($brand);
@@ -143,7 +143,7 @@ class BrandController extends AbstractController
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
         }
-        
+
         $entityManager->persist($brand);
         $entityManager->flush();
 
@@ -152,13 +152,13 @@ class BrandController extends AbstractController
 
     /**
      * Delete a brand.
-     * 
+     *
      * @OA\Tag(name="Brand")
-     * 
+     *
      * @Security(name="Bearer")
      *
-     * @param  Brand                     $brand
-     * @param  EntityManagerInterface    $entityManager
+     * @param  Brand                  $brand         Brand
+     * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]

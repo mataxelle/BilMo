@@ -9,7 +9,8 @@ use Faker\Factory;
 
 class CategoryFixtures extends Fixture
 {
-    private array $categories = [
+    private array $categories = 
+    [
         'iPhone',
         'smartphone',
         'accessories',
@@ -19,16 +20,24 @@ class CategoryFixtures extends Fixture
         'refurbished & open box',
         'wearable devices'
     ];
-
+    
+    /**
+     * GetReferenceKey
+     *
+     * @param  mixed $key key
+     * 
+     * @return string
+     */
     public static function getReferenceKey($key): string
     {
         return sprintf('category_%s', $key);
     }
 
     /**
-     * load
+     * Loading
      *
      * @param  ObjectManager $manager Manager
+     *
      * @return void
      */
     public function load(ObjectManager $manager): void
