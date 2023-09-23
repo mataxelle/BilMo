@@ -237,7 +237,7 @@ class Product
     /**
      * Get available
      *
-     * @return boolean
+     * @return bool
      */
     public function isAvailable(): ?bool
     {

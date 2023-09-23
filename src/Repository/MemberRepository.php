@@ -16,12 +16,25 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Member[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class MemberRepository extends ServiceEntityRepository
-{
+{    
+    /**
+     * __construct
+     *
+     * @param  ManagerRegistry $registry Registry
+     * @return void
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Member::class);
     }
-
+    
+    /**
+     * Save
+     *
+     * @param  Member $entity Entity
+     * @param  bool   $flush  Flush
+     * @return void
+     */
     public function save(Member $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -30,7 +43,14 @@ class MemberRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
+    
+    /**
+     * Remove
+     *
+     * @param  Member $entity Entity
+     * @param  bool   $flush  Flush
+     * @return void
+     */
     public function remove(Member $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -39,7 +59,15 @@ class MemberRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-
+    
+    /**
+     * FindByUser
+     *
+     * @param  User $user User
+     * @param  int $page  Page
+     * @param  int $limit Limit
+     * @return array
+     */
     public function findByUser(User $user, $page, $limit): array
     {
         return $this->createQueryBuilder('m')
@@ -51,7 +79,14 @@ class MemberRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
+    
+    /**
+     * FindAllWithPagination
+     *
+     * @param  int $page  Page
+     * @param  int $limit Limit
+     * @return void
+     */
     public function findAllWithPagination($page, $limit)
     {
         return $this->createQueryBuilder('m')
@@ -61,29 +96,4 @@ class MemberRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-
-//    /**
-//     * @return Member[] Returns an array of Member objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Member
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
