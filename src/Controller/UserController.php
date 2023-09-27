@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +18,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 
 #[Route('/api/user', name: 'app_user_')]
@@ -50,8 +50,6 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @Security(name="Bearer")
-     *
      * @param  UserRepository      $userRepository      UserRepository
      * @param  SerializerInterface $serializerInterface SerializerInterface
      * @param  Request             $request             Request
@@ -82,8 +80,6 @@ class UserController extends AbstractController
      * }
      *
      * @OA\Tag(name="User")
-     *
-     * @Security(name="Bearer")
      *
      * @param  EntityManagerInterface      $entityManager       EntityManager
      * @param  SerializerInterface         $serializerInterface SerializerInterface
@@ -132,14 +128,12 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @Security(name="Bearer")
-     *
      * @param  User                $user2               User2
      * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[IsGranted("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
+    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function getUserDetails(User $user2, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['user:read']);
@@ -159,8 +153,6 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @Security(name="Bearer")
-     *
      * @param  User                   $user                User
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
@@ -169,7 +161,7 @@ class UserController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
-    #[IsGranted("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour modifier ce contenu')]
+    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour modifier ce contenu')]
     public function edit(
         User $user,
         EntityManagerInterface $entityManager,
@@ -209,14 +201,12 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @Security(name="Bearer")
-     *
      * @param  User                   $user          User
      * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    #[IsGranted("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour supprimer ce contenu')]
+    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour supprimer ce contenu')]
     public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($user);

@@ -11,7 +11,8 @@ use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +20,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api/member', name: 'app_member_')]
@@ -51,8 +51,6 @@ class MemberController extends AbstractController
      * )
      *
      * @OA\Tag(name="Member")
-     *
-     * @Security(name="Bearer")
      *
      * @param  MemberRepository    $memberRepository    MemberRepository
      * @param  SerializerInterface $serializerInterface SerializerInterface
@@ -100,22 +98,20 @@ class MemberController extends AbstractController
      *
      * @OA\Tag(name="Member")
      *
-     * @Security(name="Bearer")
-     *
-     * @param  User                $user                User
+     * @param  User                $user2                User2
      * @param  MemberRepository    $memberRepository    MemberRepository
      * @param  SerializerInterface $serializerInterface SerializerInterface
      * @param  Request             $request             Request
      * @return JsonResponse
      */
     #[Route('/user/{id}/list', name: 'user_list', methods: ['GET'])]
-    //#[IsGranted(attribute: new Expression('user === subject'), subject: new Expression('args["member"].getCreatedBy()'))]
-    public function getUserMemberList(?User $user, MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
+    #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
+    public function getUserMemberList(?User $user2, MemberRepository $memberRepository, SerializerInterface $serializerInterface, Request $request): JsonResponse
     {
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
 
-        $memberList = $memberRepository->findByUser($user, $page, $limit);
+        $memberList = $memberRepository->findByUser($user2, $page, $limit);
         $context = SerializationContext::create()->setGroups(['member:read']);
         $jsonMemberList = $serializerInterface->serialize($memberList, 'json', $context);
 
@@ -133,8 +129,6 @@ class MemberController extends AbstractController
      *
      * @OA\Tag(name="Member")
      *
-     * @Security(name="Bearer")
-     *
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
      * @param  UrlGeneratorInterface  $urlGenerator        UrlGenerator
@@ -143,7 +137,7 @@ class MemberController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/create', name: 'create', methods: ['POST'])]
-    #[IsGranted("is_granted('ROLE_USER') || is_granted('ROLE_ADMIN')")]
+    #[Security("is_granted('ROLE_USER') or is_granted('ROLE_ADMIN')")]
     public function create(
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
@@ -177,14 +171,12 @@ class MemberController extends AbstractController
      *
      * @OA\Tag(name="Member")
      *
-     * @Security(name="Bearer")
-     *
      * @param  Member              $member              Member
      * @param  SerializerInterface $serializerInterface SerializerInterface
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'detail', methods: ['GET'])]
-    #[IsGranted(attribute: new Expression('user === subject'), subject: new Expression('args["member"].getCreatedBy()'))]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function getMemberDetail(Member $member, SerializerInterface $serializerInterface): JsonResponse
     {
         $context = SerializationContext::create()->setGroups(['member:read']);
@@ -203,8 +195,6 @@ class MemberController extends AbstractController
      *
      * @OA\Tag(name="Member")
      *
-     * @Security(name="Bearer")
-     *
      * @param  Member                 $member              Member
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
@@ -213,7 +203,7 @@ class MemberController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
-    #[IsGranted(attribute: new Expression('user === subject'), subject: new Expression('args["member"].getCreatedBy()'))]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function edit(
         Member $member,
         EntityManagerInterface $entityManager,
@@ -245,14 +235,12 @@ class MemberController extends AbstractController
      *
      * @OA\Tag(name="Member")
      *
-     * @Security(name="Bearer")
-     *
      * @param  Member                 $member        Member
      * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
-    #[IsGranted(attribute: new Expression('user === subject'), subject: new Expression('args["member"].getCreatedBy()'))]
+    #[Security("is_granted('ROLE_USER') and user === member.getCreatedBy() || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour afficher ce contenu')]
     public function deleteMember(Member $member, EntityManagerInterface $entityManager): JsonResponse
     {
         $entityManager->remove($member);
