@@ -71,7 +71,7 @@ class MemberRepository extends ServiceEntityRepository
     public function findByUser(User $user, $page, $limit): array
     {
         return $this->createQueryBuilder('m')
-            ->andWhere('u.createdBy = :user')
+            ->andWhere('m.createdBy = :user')
             ->setParameter('user', $user)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
