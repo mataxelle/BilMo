@@ -66,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 100)]
     #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
-    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
+    #[Assert\Length(min: 4, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['user:read', 'member:read'])]
     private ?string $name = null;
 
@@ -90,10 +90,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     #[Groups(['user:read', 'member:read'])]
     private ?string $phone = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Ce champ ne peut pas être vide')]
     #[Groups(['user:read', 'member:read'])]
     private ?string $description = null;
 

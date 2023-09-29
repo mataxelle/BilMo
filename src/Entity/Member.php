@@ -71,12 +71,12 @@ class Member
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]#[Assert\NotBlank(message: "Un prénom est obligatoire")]
-    #[Assert\Length(min: 1, max: 100, minMessage: "Le prénom doit faire au moins {{ limit }} caractères", maxMessage: "Le prénom ne peut pas faire plus de {{ limit }} caractères")]
+    #[Assert\Length(min: 4, max: 100, minMessage: "Le prénom doit faire au moins {{ limit }} caractères", maxMessage: "Le prénom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['member:read', 'user:read'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 100)]#[Assert\NotBlank(message: "Un nom de catégorie est obligatoire")]
-    #[Assert\Length(min: 1, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
+    #[Assert\Length(min: 4, max: 100, minMessage: "Le nom doit faire au moins {{ limit }} caractères", maxMessage: "Le nom ne peut pas faire plus de {{ limit }} caractères")]
     #[Groups(['member:read', 'user:read'])]
     private ?string $lastname = null;
 

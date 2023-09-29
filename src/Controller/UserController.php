@@ -142,7 +142,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Modify a user. 
+     * Modify a user.
      * Exemple : 
      * {
      *     "name": "User namemodify",
@@ -153,7 +153,7 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @param  User                   $user                User
+     * @param  User                   $user2                User2
      * @param  EntityManagerInterface $entityManager       EntityManager
      * @param  SerializerInterface    $serializerInterface SerializerInterface
      * @param  ValidatorInterface     $validator           Validator
@@ -163,7 +163,7 @@ class UserController extends AbstractController
     #[Route('/{id}', name: 'edit', methods: ['PUT'])]
     #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour modifier ce contenu')]
     public function edit(
-        User $user,
+        User $user2,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializerInterface,
         UserPasswordHasherInterface $userPasswordHasher,
@@ -172,13 +172,13 @@ class UserController extends AbstractController
     ): JsonResponse {
         $newUser = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
 
-        $user->setName($newUser->getName());
-        $user->setEmail($newUser->getEmail());
-        $user->setPassword($newUser->getPassword());
-        $user->setPhone($newUser->getPhone());
-        $user->setDescription($newUser->getDescription());
+        $user2->setName($newUser->getName());
+        $user2->setEmail($newUser->getEmail());
+        $user2->setPassword($newUser->getPassword());
+        $user2->setPhone($newUser->getPhone());
+        $user2->setDescription($newUser->getDescription());
 
-        $errors = $validator->validate($user);
+        $errors = $validator->validate($user2);
 
         if ($errors->count() > 0) {
             return new JsonResponse($serializerInterface->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
@@ -187,10 +187,10 @@ class UserController extends AbstractController
         $content = $request->toArray();
         if ($content['password']) {
             $password = $content['password'];
-            $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+            $user2->setPassword($userPasswordHasher->hashPassword($user2, $password));
         }
 
-        $entityManager->persist($user);
+        $entityManager->persist($user2);
         $entityManager->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
@@ -201,15 +201,15 @@ class UserController extends AbstractController
      *
      * @OA\Tag(name="User")
      *
-     * @param  User                   $user          User
+     * @param  User                   $user2         User2
      * @param  EntityManagerInterface $entityManager EntityManager
      * @return JsonResponse
      */
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     #[Security("is_granted('ROLE_USER') and user === user2 || is_granted('ROLE_ADMIN')", message: 'Vous n\'avez pas les droits suffisants pour supprimer ce contenu')]
-    public function deleteUser(User $user, EntityManagerInterface $entityManager): JsonResponse
+    public function deleteUser(User $user2, EntityManagerInterface $entityManager): JsonResponse
     {
-        $entityManager->remove($user);
+        $entityManager->remove($user2);
         $entityManager->flush();
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
